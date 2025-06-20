@@ -24,8 +24,17 @@ g.mapleader = ' '
 map("n", "-", "<CMD>Oil --float<CR>", opts)
 map('n', '<C-n>', '<CMD>Telescope live_grep <CR>', opts)
 map('n', '<C-f>', '<CMD>Telescope find_files <CR>', opts)
-map('n', '<C-n>', '<CMD>Telescope live_grep <CR>', opts)
-map('n', '<c-m>', '<CMD>Trouble diagnostics open focus=1<CR>', opts)
+vim.keymap.set('n','<c-m>',"<cmd>lua require('telescope.builtin').diagnostics({severity = 'error', bufnr=nil})<CR>")
+vim.keymap.set('n','<c-M>',"<cmd>lua require('telescope.builtin').diagnostics({bufnr=nil})<CR>")
+
+map('n', '<S-Backspace>', '<C-i>', opts)
+map('n', '<Backspace>', '<C-o>', opts)
+
+-- Yanking & registers
+for _, m in ipairs({'n', 'v'}) do
+    map(m, '<C-y>', '<CMD>let @"=@0<CR>', opts) --Restore backup register
+    map(m, '<C-p>', '"0p', opts) --Paste from backup
+end
 
 -- Terminal
 map('n', '<C-\\>', '<CMD>FloatermToggle<CR>', opts)
@@ -37,9 +46,6 @@ map('t', "<C-S-]>", '<CMD>FloatermNew<CR>', opts)
 
 -- Save
 map('n', '<C-s>', '<CMD>silent lua vim.lsp.buf.format()<CR>:w<cr>', opts)
-
--- Clear search
-map('n', '<C-X>', '<CMD>:noh<CR>', opts)
 
 -- Undo breakpoints in insert mode
 undobreaks = {
@@ -104,8 +110,8 @@ map('v', '<C-/>', ":'<,'>Commentary<CR>", opts)
 require('nvim-autopairs').setup()
 vim.keymap.set({'v', 'n'}, '<C-.>', require("actions-preview").code_actions)
 vim.keymap.set('n','gD','<cmd>lua vim.lsp.buf.declaration()<CR>')
-vim.keymap.set('n','gd','<cmd>lua vim.lsp.buf.definition()<CR>')
-vim.keymap.set('n','gt','<cmd>lua vim.lsp.buf.type_definition()<CR>')
+vim.keymap.set('n','gd',"<cmd>lua require('telescope.builtin').lsp_definitions()<CR>")
+vim.keymap.set('n','gt',"<cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>")
 vim.keymap.set('n','gr',"<cmd>lua require('telescope.builtin').lsp_references()<CR>")
 vim.keymap.set('n','L','<cmd>lua vim.diagnostic.open_float()<CR>')
 vim.keymap.set('n','S','<cmd>lua vim.lsp.buf.signature_help()<CR>')
@@ -179,3 +185,5 @@ if vim.g.neovide then
     vim.keymap.set('c', '<C-v>', '<C-R>+') -- Paste command mode
     vim.keymap.set('i', '<C-v>', '<ESC>l"+Pli') -- Paste insert mode
 end
+
+vim.keymap.set('n','<c-0>sucks','<cmd>CellularAutomaton make_it_rain<cr>')

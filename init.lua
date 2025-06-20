@@ -2,14 +2,13 @@ local vim = vim
 local Plug = vim.fn['plug#']
 vim.call('plug#begin')
 Plug "nvim-lua/plenary.nvim"
-Plug 'arkav/lualine-lsp-progress'
 Plug 'nvim-lualine/lualine.nvim'
 Plug 'airblade/vim-gitgutter'
 Plug ('catppuccin/nvim', { ['as'] = "catppuccin" })
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug ('dstein64/nvim-scrollview', { ['branch'] = 'main' })
-Plug ('stevearc/oil.nvim', { ['commit'] = '6724f7e94d28a53ee87ab93885d688c0ce08929f' })
+Plug 'stevearc/oil.nvim'
 Plug ('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.8' })
 Plug ('ThePrimeagen/harpoon', { ['branch'] = 'harpoon2' })
 Plug 'voldikss/vim-floaterm'
@@ -17,7 +16,6 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'neovim/nvim-lspconfig'
 Plug 'ray-x/lsp_signature.nvim'
 Plug ('filipdutescu/renamer.nvim', { ['branch'] = 'master' })
-Plug 'folke/trouble.nvim'
 Plug 'onsails/lspkind.nvim'
 Plug 'mrcjkb/rustaceanvim'
 Plug 'hrsh7th/nvim-cmp'
@@ -33,17 +31,73 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'windwp/nvim-autopairs'
 Plug 'kwkarlwang/bufjump.nvim'
+Plug 'Eandrju/cellular-automaton.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
 vim.call('plug#end')
 
+local function trim(s)
+  local l = 1
+  while string.sub(s,l,l) == ' ' do
+    l = l+1
+  end
+  local r = string.len(s)
+  while string.sub(s,r,r) == ' ' do
+    r = r-1
+  end
+  return string.sub(s,l,r)
+end
+
+local function limit(str, len)
+  if string.len(str) > len + 1 then
+    return string.sub(str, 0, len - 3)..'…'
+  else
+    return str
+  end
+end
+
+local function registers()
+  local origunmd =  vim.fn.getreg('"')
+  local origbkup =  vim.fn.getreg('0')
+  local unmdreg = trim(limit(trim(origunmd), 20))
+  local bkupreg = trim(limit(trim(origbkup), 20))
+  if origunmd ~= origbkup then
+    return " "..unmdreg.." ⇿ "..bkupreg
+  else 
+    return " "..unmdreg
+  end
+end
+
+local spinner = {
+  "▪▫▫▫",
+  "▪▫▫▫",
+  "▪▫▫▫",
+  "▪▪▫▫",
+  "▫▪▪▫",
+  "▫▫▪▪",
+  "▫▫▫▪",
+  "▫▫▫▪",
+  "▫▫▫▪",
+  "▫▫▪▪",
+  "▫▪▪▫",
+  "▪▪▫▫",
+}
+
+local snail = require 'snail'
+local mysnail = snail.new_snail()
+local snailopts = snail.default_opts
+local function walksnail()
+  mysnail = snail.walk(mysnail, snailopts)
+  return snail.show(mysnail, snailopts)
+end
 require('lualine').setup({
   theme = 'powerline-dark',
   sections = {
     lualine_a = {'mode'},
     lualine_b = {'branch', 'diff', 'diagnostics'},
     lualine_c = {'filename'},
-    lualine_x = {'lsp_progress', 'encoding'},
-    lualine_y = {'filetype'},
-    lualine_z = {'progress'}
+    lualine_x = {registers},
+    lualine_y = {'filetype', {'lsp_status', icon = '', symbols = { spinner = spinner, done = '✓'}, separator = ''}},
+    lualine_z = {walksnail}
   },
 })
 
@@ -120,16 +174,6 @@ require('renamer').setup({ min_width = 20, padding = { left = 1, right = 1 } })
 vim.cmd [[hi link RenamerBorder FloatBorder]]
 vim.cmd [[hi link RenamerTitle FloatBorder]]
 
-require('trouble').setup({
-  preview = {
-    type = "split",
-    relative = "win",
-    position = "right",
-    size = 0.3,
-  },
-})
-vim.cmd [[hi WinSeparator guifg=#8caaee]]
-
 require('nvim-lightbulb').setup({
   autocmd = { enabled = true },
   sign = { enabled = false },
@@ -156,12 +200,6 @@ require("actions-preview").setup {
   },
 }
 
-require("bufjump").setup {
-  forward_key = "<S-Backspace>",
-  backward_key = "<Backspace>",
-  on_success = nil
-}
-
 vim.cmd[[let g:VM_theme = 'nord']]
 vim.cmd[[let g:VM_maps = {}]]
 vim.cmd[[let g:VM_maps['Find Under']         = ""]]
@@ -170,3 +208,4 @@ vim.cmd[[let g:VM_maps['Find Subword Under'] = ""]]
 require "settings"
 require "cmpsettings"
 require "colors"
+require "bedtime".setup()

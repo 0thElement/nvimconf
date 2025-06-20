@@ -111,7 +111,9 @@ cmp.setup({
 
     -- Set source precedence
     sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
+        { name = 'nvim_lsp', entry_filter = function(entry, ctx) 
+            return require("cmp").lsp.CompletionItemKind.Snippet ~= entry:get_kind()
+        end },
         -- { name = 'luasnip' },
         { name = 'buffer' },
         { name = 'path' },
