@@ -11,7 +11,9 @@ local VALID_THINKING_LEVELS = {
 }
 
 M.defaults = {
-  binary = "pi",
+  -- On Windows, libuv's spawn doesn't resolve the extensionless npm shim
+  -- through PATHEXT the way a shell does, so it must be named explicitly.
+  binary = vim.fn.has('win32') == 1 and "pi.cmd" or "pi",
   provider = nil,
   model = nil,
   thinking = "off",

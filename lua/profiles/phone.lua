@@ -117,7 +117,22 @@ setup('telescope', function(telescope)
   map('gr', builtin.lsp_references, 'Find references')
 end)
 setup('lspconfig', function()
-  require('profiles.phone_lsp')
+  local servers = {
+  nil_ls = { command = 'nil', settings = {} },
+  rust_analyzer = { command = 'rust-analyzer', settings = {} },
+  }
+
+  for name, server in pairs(servers) do
+  if vim.fn.executable(server.command) == 1 then
+    local opts = { settings = server.settings }
+    if vim.lsp.config and vim.lsp.enable then
+      vim.lsp.config(name, opts)
+      vim.lsp.enable(name)
+    else
+      require('lspconfig')[name].setup(opts)
+    end
+  end
+  end
 end)
 if #missing > 0 then
   vim.notify('Phone mode: run :PlugInstall and restart. Missing: ' .. table.concat(missing, ', '), vim.log.levels.WARN)

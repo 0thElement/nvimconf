@@ -404,11 +404,10 @@ bind('n', '<C-S-p>', open_command_palette, 'Open Command Palette')
 -- OPTIONS --
 -- Performance
 o.lazyredraw = true;
--- o.shell = "powershell"
-o.shell= "powershell"
-o.shellcmdflag= "-command"
-o.shellquote= "\""
-o.shellxquote= ""
+o.shell = "bash"
+o.shellcmdflag = "-c"
+o.shellquote = ""
+o.shellxquote = ""
 o.shadafile = "NONE"
 
 -- Colors

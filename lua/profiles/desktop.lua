@@ -113,6 +113,9 @@ require('oil').setup({
 
 require('telescope').setup()
 require('harpoon').setup()
+if vim.fn.has('win32') == 1 then
+    vim.g.floaterm_shell = "powershell"
+end
 vim.cmd [[let g:floaterm_borderchars = "─│─│╭╮╯╰"]]
 vim.cmd [[let g:floaterm_titleposition = "center"]]
 vim.cmd [[let g:floaterm_width = 0.99]]
