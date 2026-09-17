@@ -83,7 +83,7 @@ cmp.setup({
     formatting = {
         fields = { 'abbr', 'kind' },
         format = function(entry, vim_item)
-            before = function (entry, vim_item)
+            local before = function (entry, vim_item)
                 vim_item.menu = ({
                     nvim_lsp = '[Lsp]',
                     -- luasnip = '[Luasnip]',

@@ -38,12 +38,24 @@ local hexcodes = {
 {"b68166","a28276","c8b7b6","e0dfdd","e1e2e0","e1e2e0","e1e2df","d2ccc8","c1aea5","b49e98","b1a3ab","969ba4","9197a0","90979f","9298a1","878d96","7b818a","9097a2","969eab","8c95a4","a4adbc","9da5b5","8c94a4","8d95a1","8a9099","888e94","b8bcbc","cdccc5","c5b9b0","a19796","9497a0","97a0ab","9098a3","888e99","898d96","8b8c95","8d8b95","8e8c96","8e8d95","abaaaf","bbbabc","898788","8d8c8b","8e8d8b","8e8e8c","8f8e8c","8e8d8d","8e8d8e","8e8d8d","8d8c8d","8d8c8d","8d8c8e","8c8b8d","8c8b8d","8d8a8a","8d8b8b","8b898a","8b898a","89888a","888789","888688","868488","858487","8f9092","8f9091","8e8f91","8e8f91","8e8f91","8f8f90","8f8f90","8f8f8f","908f8d","918f8c","928f8b","93908a","958f88","978f88","968e87","958c86","928984",},
 }
 
+local function is_bedtime_e2(hour)
+    -- local core = hour > 25 or hour < 3.5
+    -- -- local first_nap = hour > 7.5 and hour < 8
+    -- local second_nap = hour > 12 and hour < 12.5
+    -- return core or first_nap 
+    return false
+end
+
+local function is_bedtime_dc2(hour)
+    local first_core = hour > 22.5 or hour < 2
+    local second_core = hour > 5.75 and hour < 7.5
+    local nap = hour > 12 and hour < 12.5
+    return first_core or second_core or nap
+end
+
 local function is_bedtime()
     local hour = tonumber(os.date("%H")) + tonumber(os.date("%M")) / 60
-    local core = hour > 22.5 or hour < 3.5
-    local first_nap = hour > 6.5 or hour < 7
-    local second_nap = hour > 12 or hour < 12.5
-    return core or first_nap or second_nap
+    return is_bedtime_e2(hour)
 end
 
 local lock_triggered = false
